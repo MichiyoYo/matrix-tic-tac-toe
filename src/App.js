@@ -2,6 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import { useState } from "react";
 import Square from "./components/Square";
+import PATTERNS from "./Patterns";
 
 function App() {
   //using a matrix as a board
