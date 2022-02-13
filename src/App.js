@@ -14,6 +14,10 @@ function App() {
 
   const [player, setPlayer] = useState("❌");
   const [result, setResult] = useState({ winner: "none", status: "none" });
+  const [announcement, setAnnouncement] = useState({
+    message: "",
+    freeze: false,
+  });
 
   const chooseSlot = (i, j) => {
     let updatedBoard = [...board];
@@ -62,18 +66,47 @@ function App() {
     return false;
   };
 
+  const restart = () => {
+    setBoard([
+      new Array(3).fill(""),
+      new Array(3).fill(""),
+      new Array(3).fill(""),
+    ]);
+    setPlayer("❌");
+    setResult({ winner: "none", status: "none" });
+    setAnnouncement({ message: "", freeze: false });
+  };
+
+  const endGame = () => {
+    let msg = "";
+    if (result.status === "Won") {
+      msg = `Player ${result.winner} ${result.status} 🔥`;
+    }
+    if (result.status === "Tie") {
+      msg = `No one wins 😿`;
+    }
+
+    setAnnouncement({ message: msg, freeze: true });
+  };
+
   useEffect(() => {
-    if (!checkWinner()) {
+    if (!checkWinner() && !checkTie()) {
       nextTurn(player);
     }
-    checkTie();
   }, [board]);
+
+  useEffect(() => {
+    if (result.status !== "none") {
+      endGame();
+    }
+  }, [result]);
 
   return (
     <div className="App">
       <div className="game">
         <h1>Tic Tac Toe</h1>
-        <div className="board">
+        {announcement.message && <h2>{announcement.message}</h2>}
+        <div className={`board ${announcement.freeze ? "freeze" : ""}`}>
           <div className="row">
             <Square val={board[0][0]} chooseSlot={() => chooseSlot(0, 0)} />
             <Square val={board[0][1]} chooseSlot={() => chooseSlot(0, 1)} />
@@ -90,6 +123,7 @@ function App() {
             <Square val={board[2][2]} chooseSlot={() => chooseSlot(2, 2)} />
           </div>
         </div>
+        <button onClick={() => restart()}>RESTART</button>
       </div>
     </div>
   );
