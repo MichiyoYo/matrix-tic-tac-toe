@@ -51,8 +51,22 @@ function App() {
     });
   };
 
+  const checkTie = () => {
+    let fullBoard = true;
+    if (board[0].includes("") || board[1].includes("") || board[2].includes(""))
+      fullBoard = false;
+    if (fullBoard && result.status === "none") {
+      setResult({ winner: "No One", status: "Tie" });
+      return true;
+    }
+    return false;
+  };
+
   useEffect(() => {
-    if (!checkWinner()) nextTurn(player);
+    if (!checkWinner()) {
+      nextTurn(player);
+    }
+    checkTie();
   }, [board]);
 
   return (
